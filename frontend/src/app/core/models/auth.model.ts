@@ -1,10 +1,10 @@
 export interface AuthUser {
-  id: number;
+  id: string;
   username: string;
-  role: 'guest' | 'user' | 'admin';
+  role: 'guest' | 'customer' | 'admin';
 }
 
 export interface AuthState {
-  role: 'guest' | 'user' | 'admin';
+  role: 'guest' | 'customer' | 'admin';
   user?: AuthUser | null;
 }

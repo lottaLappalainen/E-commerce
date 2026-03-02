@@ -1,0 +1,16 @@
+<div *ngIf="users.length === 0; else usersList">
+  No users exist
+</div>
+
+<ng-template #usersList>
+  <ul>
+    <li *ngFor="let user of users">
+      <h3>{{ user.username }}</h3>
+      <p>{{ user.role }}</p>
+
+      <button (click)="handleInspect(user.id)">Inspect</button>
+      <button (click)="handleModify(user.id)">Modify</button>
+      <button (click)="handleDelete(user.id)">Delete</button>
+    </li>
+  </ul>
+</ng-template>

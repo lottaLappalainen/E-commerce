@@ -1,0 +1,13 @@
+<form [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+  <h3>{{ form.value.name }}</h3>
+
+  <select formControlName="role">
+    <option value="customer">Customer</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <button type="submit">Submit</button>
+  <button type="button" (click)="handleCancel()">Cancel</button>
+
+</form>

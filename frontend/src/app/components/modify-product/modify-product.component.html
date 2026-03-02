@@ -1,0 +1,23 @@
+<h2>Modify Product</h2>
+
+<form [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+  <div>
+    <label>Name:</label>
+    <input type="text" formControlName="name" />
+  </div>
+
+  <div>
+    <label>Description:</label>
+    <textarea formControlName="description"></textarea>
+  </div>
+
+  <div>
+    <label>Price:</label>
+    <input type="number" formControlName="price" step="0.01" />
+  </div>
+
+  <button type="submit">Submit</button>
+  <button type="button" (click)="handleCancel()">Cancel</button>
+
+</form>

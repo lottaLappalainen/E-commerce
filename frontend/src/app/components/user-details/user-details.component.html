@@ -1,0 +1,10 @@
+<p *ngIf="loading">Loading...</p>
+
+<div *ngIf="!loading && user as u">
+  <h3>{{ u.username }}</h3>
+  <p>{{ u.role }}</p>
+  <p>{{ u.email }}</p>
+
+  <button (click)="handleModify()">Modify</button>
+  <button (click)="handleDelete()">Delete</button>
+</div>

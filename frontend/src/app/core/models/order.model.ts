@@ -1,9 +1,9 @@
-import { Product } from './product.model';
+import { CartItem } from './cart-item.model';
 
 export interface Order {
   id: number;
-  userId: number;
-  products: Product[];
+  userId: string;
+  products: CartItem[];
   totalPrice: number;
   createdAt: string;
 }

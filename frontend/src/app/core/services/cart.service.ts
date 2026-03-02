@@ -33,12 +33,12 @@ export class CartService {
     }
   }
 
-  removeFromCart(productId: number) {
+  removeFromCart(productId: string) {
     const updated = this.items.filter(p => p.id !== productId);
     this.cartState.next(updated);
   }
 
-  updateQuantity(productId: number, quantity: number) {
+  updateQuantity(productId: string, quantity: number) {
     const updated = this.items.map(item =>
       item.id === productId
         ? { ...item, quantity }

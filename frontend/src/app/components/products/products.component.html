@@ -1,0 +1,33 @@
+<div *ngIf="products.length === 0; else productList">
+  No products available
+</div>
+
+<ng-template #productList>
+  <div *ngFor="let product of products">
+    <h3>{{ product.name }}</h3>
+    <p>{{ product.price }}</p>
+
+    <button (click)="handleInspect(product.id)">Inspect</button>
+
+    <div *ngIf="userRole === 'admin'; else customerView">
+      <button (click)="handleModify(product.id)">Modify</button>
+      <button (click)="handleDelete(product.id)">Delete</button>
+    </div>
+
+    <ng-template #customerView>
+      <button (click)="handleAddToCart(product)">Add to Cart</button>
+    </ng-template>
+  </div>
+</ng-template>
+
+<div *ngIf="userRole === 'admin'">
+  <button (click)="isFormVisible = !isFormVisible">
+    Add Product
+  </button>
+</div>
+
+<app-product-form
+  *ngIf="isFormVisible && userRole === 'admin'"
+  (submitForm)="handleFormSubmit($event)"
+  (cancel)="isFormVisible = false">
+</app-product-form>
