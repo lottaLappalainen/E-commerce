@@ -1,7 +1,7 @@
 import { CartItem } from './cart-item.model';
 
 export interface Order {
-  id: number;
+  id: string;
   userId: string;
   products: CartItem[];
   totalPrice: number;

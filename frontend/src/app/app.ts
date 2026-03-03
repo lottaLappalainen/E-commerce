@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { NotificationComponent } from './components/notification/notification.component';
-import { AuthService } from './core/services/auth.service';
 import { NotificationService } from './core/services/notification.service';
 
 @Component({
@@ -29,14 +28,10 @@ import { NotificationService } from './core/services/notification.service';
   `,
   styleUrl: './app.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
-  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   notification$ = this.notificationService.notification$;
 
-  ngOnInit(): void {
-    this.authService.checkStatus();
-  }
 }

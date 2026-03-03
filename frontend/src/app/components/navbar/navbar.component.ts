@@ -22,8 +22,7 @@ export class NavbarComponent {
     .pipe(map(role => role.charAt(0).toUpperCase() + role.slice(1)));
 
   handleLogout() {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

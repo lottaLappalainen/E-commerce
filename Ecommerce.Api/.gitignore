@@ -1,6 +1,8 @@
 .env
 
 secrets.json
+.gitignore
+appsettings
 
 bin/
 obj/

@@ -20,7 +20,7 @@ export class OrdersComponent implements OnInit {
     this.ordersService.fetchOrders().subscribe();
   }
 
-  handleInspectOrder(orderId: number) {
+  handleInspectOrder(orderId: string) {
     this.router.navigate(['/orders', orderId]);
   }
 }

@@ -1,16 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProductFormComponent } from '../product-form/product-form.component';
 import { ProductsService } from '../../core/services/products.service';
 import { CartService } from '../../core/services/cart.service';
-import { Product } from '../../core/models/product.model';
 
 @Component({
   selector: 'app-products',
   standalone: true,
   imports: [CommonModule, ProductFormComponent],
-  templateUrl: './products.component.html'
+  templateUrl: './products.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsComponent implements OnInit {
 
@@ -18,17 +18,13 @@ export class ProductsComponent implements OnInit {
   private cartService = inject(CartService);
   private router = inject(Router);
 
-  products: Product[] = [];
+  products$ = this.productService.products$;
+
   userRole = 'guest';
   isFormVisible = false;
 
   ngOnInit(): void {
-    this.fetchProducts();
-  }
-
-  fetchProducts(): void {
-    this.productService.fetchProducts()
-      .subscribe(data => this.products = data);
+    this.productService.fetchProducts().subscribe();
   }
 
   handleInspect(id: string): void {
@@ -41,17 +37,17 @@ export class ProductsComponent implements OnInit {
 
   handleDelete(id: string): void {
     this.productService.deleteProduct(id)
-      .subscribe(() => this.fetchProducts());
+      .subscribe(() => this.productService.fetchProducts().subscribe());
   }
 
-  handleAddToCart(product: Product): void {
+  handleAddToCart(product: any): void {
     this.cartService.addToCart(product);
   }
 
-  handleFormSubmit(formData: Omit<Product, 'id'>): void {
+  handleFormSubmit(formData: any): void {
     this.productService.addProduct(formData)
       .subscribe(() => {
-        this.fetchProducts();
+        this.productService.fetchProducts().subscribe();
         this.isFormVisible = false;
       });
   }

@@ -8,7 +8,7 @@ import { Product } from '../models/product.model';
 })
 export class ProductsApiService {
 
-  private baseUrl = 'http://localhost:3001/api/products';
+  private baseUrl = 'http://localhost:5046/api/Products';
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,7 @@ export class ProductsApiService {
     return this.http.post<Product>(this.baseUrl, data);
   }
 
-  deleteProduct(id: string): Observable<Product> {
-    return this.http.delete<Product>(`${this.baseUrl}/${id}`);
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

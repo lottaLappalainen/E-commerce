@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, tap, finalize, catchError, throwError } from 'rxjs';
 import { ProductsApiService } from '../api/products.api.service';
 import { Product } from '../models/product.model';
 import { NotificationService } from './notification.service';
@@ -21,20 +21,36 @@ export class ProductsService {
   ) {}
 
   fetchProducts() {
-    this.notification.set({
-      message: 'Fetching products...',
-      stateType: 'product',
-      requestStatus: 'loading'
+    queueMicrotask(() => {
+      this.notification.set({
+        message: 'Fetching products...',
+        stateType: 'product',
+        requestStatus: 'loading'
+      });
     });
 
     return this.api.getProducts().pipe(
       tap(products => {
         this.productsState.next(products);
-        this.notification.set({
-          message: 'Products loaded successfully!',
-          stateType: 'product',
-          requestStatus: 'success'
+
+        queueMicrotask(() => {
+          this.notification.set({
+            message: 'Products loaded successfully!',
+            stateType: 'product',
+            requestStatus: 'success'
+          });
         });
+      }),
+      catchError(error => {
+        queueMicrotask(() => {
+          this.notification.set({
+            message: 'Failed to load products',
+            stateType: 'product',
+            requestStatus: 'error'
+          });
+        });
+
+        return throwError(() => error);
       })
     );
   }
@@ -55,9 +71,10 @@ export class ProductsService {
 
   deleteProduct(id: string) {
     return this.api.deleteProduct(id).pipe(
-      tap(deleted => {
+      tap(() => {
         const updated = this.productsState.value
-          .filter(p => p.id !== deleted.id);
+          .filter(p => p.id !== id);
+
         this.productsState.next(updated);
       })
     );

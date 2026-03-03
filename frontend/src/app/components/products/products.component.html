@@ -1,24 +1,26 @@
-<div *ngIf="products.length === 0; else productList">
-  No products available
-</div>
-
-<ng-template #productList>
-  <div *ngFor="let product of products">
-    <h3>{{ product.name }}</h3>
-    <p>{{ product.price }}</p>
-
-    <button (click)="handleInspect(product.id)">Inspect</button>
-
-    <div *ngIf="userRole === 'admin'; else customerView">
-      <button (click)="handleModify(product.id)">Modify</button>
-      <button (click)="handleDelete(product.id)">Delete</button>
-    </div>
-
-    <ng-template #customerView>
-      <button (click)="handleAddToCart(product)">Add to Cart</button>
-    </ng-template>
+<ng-container *ngIf="products$ | async as products">
+  <div *ngIf="products.length === 0; else productList">
+    No products available
   </div>
-</ng-template>
+
+  <ng-template #productList>
+    <div *ngFor="let product of products">
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.price }}</p>
+
+      <button (click)="handleInspect(product.id)">Inspect</button>
+
+      <div *ngIf="userRole === 'admin'; else customerView">
+        <button (click)="handleModify(product.id)">Modify</button>
+        <button (click)="handleDelete(product.id)">Delete</button>
+      </div>
+
+      <ng-template #customerView>
+        <button (click)="handleAddToCart(product)">Add to Cart</button>
+      </ng-template>
+    </div>
+  </ng-template>
+</ng-container>
 
 <div *ngIf="userRole === 'admin'">
   <button (click)="isFormVisible = !isFormVisible">
