@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecommerce.Api.Entities;
 
-public class OrderItem
+public class OrderItem : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 

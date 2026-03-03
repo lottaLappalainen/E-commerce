@@ -1,25 +1,28 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+using System.ComponentModel.DataAnnotations;
 
-namespace Ecommerce.Api.Data;
+namespace Ecommerce.Api.Entities;
 
-public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+public class User : BaseEntity
 {
-    public AppDbContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
 
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+    [Required]
+    [EmailAddress]
+    [MaxLength(255)]
+    public string Email { get; set; } = string.Empty;
 
-        optionsBuilder.UseNpgsql(connectionString);
+    [Required]
+    public string PasswordHash { get; set; } = string.Empty;
 
-        return new AppDbContext(optionsBuilder.Options);
-    }
+    public UserRole Role { get; set; } = UserRole.Customer;
+
+    // Refresh token turvallisesti hashattuna
+    public string? RefreshTokenHash { get; set; }
+    public DateTime? RefreshTokenExpiry { get; set; }
+
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

@@ -43,16 +43,21 @@ public class OrderService : IOrderService
 
     public async Task<OrderDto> CreateAsync(CreateOrderDto dto)
     {
+        if (!dto.Items.Any())
+            throw new Exception("Order must contain at least one item");
+
         var productIds = dto.Items.Select(i => i.ProductId).ToList();
 
         var products = await _context.Products
             .Where(p => productIds.Contains(p.Id))
             .ToListAsync();
 
+        if (products.Count != productIds.Count)
+            throw new Exception("Invalid product in order");
+
         var order = new Order
         {
-            CustomerId = dto.UserId,
-            CreatedAt = DateTime.UtcNow
+            CustomerId = dto.UserId
         };
 
         foreach (var item in dto.Items)
@@ -66,8 +71,6 @@ public class OrderService : IOrderService
                 UnitPrice = product.Price
             });
         }
-
-        order.TotalPrice = order.Items.Sum(i => i.UnitPrice * i.Quantity);
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();

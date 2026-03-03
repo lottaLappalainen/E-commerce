@@ -1,19 +1,15 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Ecommerce.Api.Entities;
 
-public class Order
+public class Order : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
     public Guid CustomerId { get; set; }
-
     public User Customer { get; set; } = null!;
 
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal TotalPrice { get; set; }
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // Lasketaan aina serverillä ettei voi manipuloida
+    public decimal TotalPrice =>
+        Items.Sum(i => i.Quantity * i.UnitPrice);
 }
