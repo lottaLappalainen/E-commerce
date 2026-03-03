@@ -4,9 +4,9 @@ namespace Ecommerce.Api.Services;
 
 public interface IProductService
 {
-    Task<List<Product>> GetAllAsync();
-    Task<Product?> GetByIdAsync(Guid id);
-    Task<Product> CreateAsync(Product product);
-    Task<Product?> UpdateAsync(Guid id, Product updated);
+    Task<List<ProductDto>> GetAllAsync();
+    Task<ProductDto?> GetByIdAsync(Guid id);
+    Task<ProductDto> CreateAsync(ProductCreateDto dto);
+    Task<ProductDto?> UpdateAsync(Guid id, ProductUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

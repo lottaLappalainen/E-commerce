@@ -1,5 +1,4 @@
 using Ecommerce.Api.DTOs;
-using Ecommerce.Api.Entities;
 using Ecommerce.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,16 +31,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(ProductCreateDto dto)
     {
-        var product = new Product
-        {
-            Name = dto.Name,
-            Price = dto.Price,
-            Description = dto.Description,
-            ImageUrl = dto.ImageUrl
-        };
-
-        var created = await _service.CreateAsync(product);
-
+        var created = await _service.CreateAsync(dto);
         return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
     }
 
@@ -49,16 +39,7 @@ public class ProductsController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, ProductUpdateDto dto)
     {
-        var updatedProduct = new Product
-        {
-            Name = dto.Name ?? "",
-            Price = dto.Price ?? 0,
-            Description = dto.Description,
-            ImageUrl = dto.ImageUrl
-        };
-
-        var result = await _service.UpdateAsync(id, updatedProduct);
-
+        var result = await _service.UpdateAsync(id, dto);
         return result == null ? NotFound() : Ok(result);
     }
 
