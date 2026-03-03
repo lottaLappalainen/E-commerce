@@ -1,4 +1,4 @@
-using Ecommerce.Api.Entities;
+using Ecommerce.Api.DTOs;
 
 namespace Ecommerce.Api.Services;
 

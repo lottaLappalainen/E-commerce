@@ -22,6 +22,7 @@ public class AuthService : IAuthService
         _config = config;
     }
 
+    // Rekisteröinti
     public async Task<AuthResponseDto?> RegisterAsync(string name, string email, string password)
     {
         if (await _context.Users.AnyAsync(u => u.Email == email))
@@ -40,6 +41,7 @@ public class AuthService : IAuthService
         return await GenerateAuthResponse(user);
     }
 
+    // Login
     public async Task<AuthResponseDto?> LoginAsync(string email, string password)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -65,10 +67,7 @@ public class AuthService : IAuthService
         return await GenerateAuthResponse(user);
     }
 
-    // -----------------------------
-    // Helpers
-    // -----------------------------
-
+    // JWT + refresh token generointi
     private async Task<AuthResponseDto> GenerateAuthResponse(User user)
     {
         var accessToken = GenerateJwt(user);

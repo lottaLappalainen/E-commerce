@@ -1,9 +1,10 @@
-using Ecommerce.Api.Entities;
+using Ecommerce.Api.DTOs;
 
 namespace Ecommerce.Api.Services;
 
 public interface IAuthService
 {
-    Task<string?> LoginAsync(string email, string password);
-    Task<string?> RegisterAsync(string name, string email, string password);
+    Task<AuthResponseDto?> LoginAsync(string email, string password);
+    Task<AuthResponseDto?> RegisterAsync(string name, string email, string password);
+    Task<AuthResponseDto?> RefreshTokenAsync(string refreshToken);
 }

@@ -1,11 +1,11 @@
-using Ecommerce.Api.Entities;
+using Ecommerce.Api.DTOs;
 
 namespace Ecommerce.Api.Services;
 
 public interface IUserService
 {
-    Task<List<User>> GetAllAsync();
-    Task<User?> GetByIdAsync(Guid id);
-    Task<User?> UpdateRoleAsync(Guid id, string role);
-    Task<bool> DeleteAsync(Guid id);
+    Task<List<UserDto>> GetAllAsync();
+    Task<UserDto?> GetByIdAsync(Guid id);
+    Task<UserDto?> UpdateRoleAsync(Guid id, string role);
+    Task<UserDto?> DeleteAsync(Guid id);
 }

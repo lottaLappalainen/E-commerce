@@ -17,6 +17,7 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
+    // Haetaan kaikki käyttäjät 
     public async Task<List<UserDto>> GetAllAsync()
     {
         var users = await _context.Users
@@ -41,11 +42,13 @@ public class UserService : IUserService
         if (user == null) return null;
 
         user.Role = Enum.Parse<UserRole>(role, true);
+
         await _context.SaveChangesAsync();
 
         return _mapper.Map<UserDto>(user);
     }
 
+    // Poisto palauttaa poistetun userin DTO:n
     public async Task<UserDto?> DeleteAsync(Guid id)
     {
         var user = await _context.Users.FindAsync(id);
