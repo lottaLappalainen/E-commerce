@@ -1,0 +1,15 @@
+.env
+
+secrets.json
+
+bin/
+obj/
+*.db
+*.log
+*.sqlite
+
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

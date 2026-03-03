@@ -37,5 +37,8 @@ public class UsersController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
-        => await _service.DeleteAsync(id) ? NoContent() : NotFound();
+    {
+        var deleted = await _service.DeleteAsync(id);
+        return deleted == null ? NotFound() : Ok(deleted);
+    }
 }

@@ -34,13 +34,13 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<User?> DeleteAsync(Guid id)
     {
         var user = await _context.Users.FindAsync(id);
-        if (user == null) return false;
+        if (user == null) return null;
 
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
-        return true;
+        return user;
     }
 }
