@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Ecommerce.Api.Services;
 using Ecommerce.Api.DTOs;
-using System.Security.Claims;
+using Ecommerce.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Api.Controllers;
 
@@ -10,59 +8,31 @@ namespace Ecommerce.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthService _service;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService service)
     {
-        _authService = authService;
+        _service = service;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register(RegisterDto dto)
     {
-        var result = await _authService.RegisterAsync(dto.Name, dto.Email, dto.Password);
-
-        if (result == null)
-            return BadRequest(new { error = "Email already exists" });
-
-        return Ok(result);
+        var result = await _service.RegisterAsync(dto.Name, dto.Email, dto.Password);
+        return result == null ? BadRequest("Email already exists") : Ok(result);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login(LoginDto dto)
     {
-        var result = await _authService.LoginAsync(dto.Email, dto.Password);
-
-        if (result == null)
-            return Unauthorized(new { error = "Invalid email or password" });
-
-        return Ok(result);
+        var result = await _service.LoginAsync(dto.Email, dto.Password);
+        return result == null ? Unauthorized() : Ok(result);
     }
 
-    [Authorize]
-    [HttpGet("check-status")]
-    public IActionResult CheckStatus()
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] string refreshToken)
     {
-        var id = User.FindFirst("id")?.Value;
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-        var role = User.FindFirst(ClaimTypes.Role)?.Value;
-
-        return Ok(new
-        {
-            user = new
-            {
-                id,
-                username,
-                email,
-                role = role?.ToLower()
-            }
-        });
-    }
-
-    [Authorize]
-    [HttpGet("logout")]
-    public IActionResult Logout()
-    {
-        return Ok(new { message = "Logged out" });
+        var result = await _service.RefreshTokenAsync(refreshToken);
+        return result == null ? Unauthorized() : Ok(result);
     }
 }

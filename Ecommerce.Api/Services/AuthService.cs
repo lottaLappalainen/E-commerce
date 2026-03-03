@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using BCrypt.Net;
 using Ecommerce.Api.Data;
+using Ecommerce.Api.DTOs;
 using Ecommerce.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,7 +22,7 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public async Task<object?> RegisterAsync(string name, string email, string password)
+    public async Task<AuthResponseDto?> RegisterAsync(string name, string email, string password)
     {
         if (await _context.Users.AnyAsync(u => u.Email == email))
             return null;
@@ -35,10 +37,10 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return BuildAuthResponse(user);
+        return await GenerateAuthResponse(user);
     }
 
-    public async Task<object?> LoginAsync(string email, string password)
+    public async Task<AuthResponseDto?> LoginAsync(string email, string password)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null) return null;
@@ -46,23 +48,45 @@ public class AuthService : IAuthService
         if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             return null;
 
-        return BuildAuthResponse(user);
+        return await GenerateAuthResponse(user);
     }
 
-    private object BuildAuthResponse(User user)
+    public async Task<AuthResponseDto?> RefreshTokenAsync(string refreshToken)
     {
-        var token = GenerateJwt(user);
+        var users = await _context.Users
+            .Where(u => u.RefreshTokenHash != null && u.RefreshTokenExpiry > DateTime.UtcNow)
+            .ToListAsync();
 
-        return new
+        var user = users.FirstOrDefault(u =>
+            BCrypt.Net.BCrypt.Verify(refreshToken, u.RefreshTokenHash));
+
+        if (user == null) return null;
+
+        return await GenerateAuthResponse(user);
+    }
+
+    // -----------------------------
+    // Helpers
+    // -----------------------------
+
+    private async Task<AuthResponseDto> GenerateAuthResponse(User user)
+    {
+        var accessToken = GenerateJwt(user);
+        var refreshToken = GenerateSecureRefreshToken();
+
+        user.RefreshTokenHash = BCrypt.Net.BCrypt.HashPassword(refreshToken);
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
+        await _context.SaveChangesAsync();
+
+        return new AuthResponseDto
         {
-            user = new
-            {
-                id = user.Id,
-                username = user.username
-                email = user.Email,
-                role = user.Role.ToString().ToLower()
-            },
-            token
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            Role = user.Role.ToString().ToLower(),
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
         };
     }
 
@@ -82,10 +106,18 @@ public class AuthService : IAuthService
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private string GenerateSecureRefreshToken()
+    {
+        var randomBytes = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+        return Convert.ToBase64String(randomBytes);
     }
 }

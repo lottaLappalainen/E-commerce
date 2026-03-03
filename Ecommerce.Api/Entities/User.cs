@@ -1,25 +1,25 @@
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
-namespace Ecommerce.Api.Entities;
+namespace Ecommerce.Api.Data;
 
-public class User
+public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public AppDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = string.Empty;
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
 
-    [Required]
-    [EmailAddress]
-    [MaxLength(255)]
-    public string Email { get; set; } = string.Empty;
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-    [Required]
-    public string PasswordHash { get; set; } = string.Empty;
+        optionsBuilder.UseNpgsql(connectionString);
 
-    public UserRole Role { get; set; } = UserRole.Customer;
-
-    public ICollection<Order> Orders { get; set; } = new List<Order>();
-    
+        return new AppDbContext(optionsBuilder.Options);
+    }
 }
