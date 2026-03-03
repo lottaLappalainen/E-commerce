@@ -2,37 +2,75 @@ using System.Text;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Middleware;
 using Ecommerce.Api.Services;
-using Ecommerce.Api.Mappings; 
+using Ecommerce.Api.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Threading.RateLimiting;
+
+// ----------------------------
+// SERILOG CONFIG
+// ----------------------------
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "logs/log-.txt",
+        rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PostgreSQL
+builder.Host.UseSerilog();
+
+// ----------------------------
+// DATABASE
+// ----------------------------
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+// ----------------------------
+// CORS
+// ----------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
-// controllers ja swagger
+// ----------------------------
+// Controllers + Swagger
+// ----------------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// automapper
+// ----------------------------
+// AutoMapper
+// ----------------------------
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// services
+// ----------------------------
+// Services
+// ----------------------------
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// login rajotus
+// ----------------------------
+// Rate limiting
+// ----------------------------
 builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("loginPolicy", opt =>
@@ -43,7 +81,9 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-// JWT authentication
+// ----------------------------
+// JWT
+// ----------------------------
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new Exception("JWT Key not configured.");
 
@@ -67,10 +107,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// build app
 var app = builder.Build();
 
-// global middleware
+// ----------------------------
+// GLOBAL ERROR HANDLER
+// ----------------------------
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -79,7 +120,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("FrontendPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
+using Serilog;
 
 namespace Ecommerce.Api.Middleware;
 
-// Yleinen error handler -> ei enää try/catch joka paikassa
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -21,12 +21,14 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Unhandled exception occurred.");
+
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 
             var response = new
             {
-                message = ex.Message,
+                message = "Something went wrong.",
                 statusCode = 500
             };
 
