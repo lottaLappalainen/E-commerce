@@ -5,37 +5,32 @@ import { UsersService } from '../../core/services/users.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
-  selector: 'app-user-details',
+  selector: 'app-user-inspect',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './user-details.component.html'
 })
 export class UserDetailsComponent implements OnInit {
 
+  private usersService = inject(UsersService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private userService = inject(UsersService);
 
   user: User | null = null;
   loading = true;
 
   ngOnInit(): void {
-    const userId = String(this.route.snapshot.paramMap.get('userId'));
+    const id = this.route.snapshot.paramMap.get('id');
 
-    this.userService.fetchUser(userId)
+    if (!id) {
+      this.loading = false;
+      return;
+    }
+
+    this.usersService.fetchUser(id)
       .subscribe(user => {
         this.user = user;
         this.loading = false;
-      });
-  }
-
-  handleDelete(): void {
-    if (!this.user) return;
-    if (!confirm('Are you sure?')) return;
-
-    this.userService.deleteUser(this.user.id)
-      .subscribe(() => {
-        this.router.navigate(['/users']);
       });
   }
 
@@ -43,4 +38,15 @@ export class UserDetailsComponent implements OnInit {
     if (!this.user) return;
     this.router.navigate(['/users', this.user.id, 'modify']);
   }
+
+  handleDelete(): void {
+    if (!this.user) return;
+    if (!confirm('Are you sure?')) return;
+
+    this.usersService.deleteUser(this.user.id)
+      .subscribe(() => {
+        this.router.navigate(['/users']);
+      });
+  }
+
 }

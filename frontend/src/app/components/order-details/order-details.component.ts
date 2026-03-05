@@ -1,8 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../../core/services/orders.service';
-import { map, switchMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Order } from '../../core/models/order.model';
 
@@ -12,16 +11,17 @@ import { Order } from '../../core/models/order.model';
   imports: [CommonModule],
   templateUrl: './order-details.component.html'
 })
-export class OrderDetailsComponent {
+export class OrderDetailsComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private ordersService = inject(OrdersService);
 
-  loading = true;
+  order$!: Observable<Order>;
 
-  readonly order$: Observable<Order> = this.route.paramMap.pipe(
-    map(params => params.get('orderId')!),
-    switchMap(orderId => this.ordersService.fetchOrder(orderId)),
-    tap(() => this.loading = false)
-  );
+  ngOnInit(): void {
+    const id = String(this.route.snapshot.paramMap.get('id'));
+
+    // haetaan yksittäinen tilaus backendistä
+    this.order$ = this.ordersService.fetchOrder(id);
+  }
 }

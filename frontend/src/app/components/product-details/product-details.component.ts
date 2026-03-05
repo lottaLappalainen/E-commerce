@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductsService } from '../../core/services/products.service';
 import { CartService } from '../../core/services/cart.service';
 import { Product } from '../../core/models/product.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
@@ -18,34 +19,28 @@ export class ProductDetailsComponent implements OnInit {
   private productService = inject(ProductsService);
   private cartService = inject(CartService);
 
-  product: Product | null = null;
-  loading = true;
+  product$!: Observable<Product>;
   userRole = 'guest';
 
   ngOnInit(): void {
     const productId = String(this.route.snapshot.paramMap.get('productId'));
 
-    this.productService.fetchProduct(productId).subscribe(product => {
-      this.product = product;
-      this.loading = false;
-    });
+    // haetaan yksittäinen tuote backendistä
+    this.product$ = this.productService.fetchProduct(productId);
   }
 
-  handleAddToCart(): void {
-    if (!this.product) return;
-    this.cartService.addToCart(this.product);
+  handleAddToCart(product: Product): void {
+    this.cartService.addToCart(product);
   }
 
-  handleDelete(): void {
-    if (!this.product) return;
-
-    this.productService.deleteProduct(this.product.id).subscribe(() => {
+  handleDelete(product: Product): void {
+    this.productService.deleteProduct(product.id).subscribe(() => {
       this.router.navigate(['/products']);
     });
   }
 
-  handleModify(): void {
-    if (!this.product) return;
-    this.router.navigate(['/products', this.product.id, 'modify']);
+  handleModify(product: Product): void {
+    this.router.navigate(['/products', product.id, 'modify']);
   }
+
 }

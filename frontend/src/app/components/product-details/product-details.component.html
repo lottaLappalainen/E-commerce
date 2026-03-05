@@ -1,16 +1,18 @@
-<p *ngIf="loading">Loading...</p>
-
-<div *ngIf="!loading && product as p">
+<div *ngIf="product$ | async as p; else loading">
   <h2>{{ p.name }}</h2>
   <p>{{ p.description }}</p>
   <p>{{ p.price }}</p>
 
   <div *ngIf="userRole === 'admin'; else userView">
-    <button (click)="handleModify()">Modify</button>
-    <button (click)="handleDelete()">Delete</button>
+    <button (click)="handleModify(p)">Modify</button>
+    <button (click)="handleDelete(p)">Delete</button>
   </div>
 
   <ng-template #userView>
-    <button (click)="handleAddToCart()">Add to Cart</button>
+    <button (click)="handleAddToCart(p)">Add to Cart</button>
   </ng-template>
 </div>
+
+<ng-template #loading>
+  <p>Loading...</p>
+</ng-template>
