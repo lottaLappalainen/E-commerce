@@ -1,0 +1,30 @@
+services:
+
+  api:
+    image: mcr.microsoft.com/dotnet/sdk:8.0-alpine
+    container_name: ecommerce_api_dev
+    working_dir: /app
+    volumes:
+      - ./Ecommerce.Api:/app
+    command: dotnet watch run --urls=http://0.0.0.0:5046
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__DefaultConnection: Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      JWT__Key: ${JWT_KEY}
+    ports:
+      - "5046:5046"
+    depends_on:
+      - postgres
+
+  frontend:
+    image: node:20-alpine
+    container_name: ecommerce_frontend_dev
+    working_dir: /app
+    volumes:
+      - ./ecommerce-frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm start"
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api

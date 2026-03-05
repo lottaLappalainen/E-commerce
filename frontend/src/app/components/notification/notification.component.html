@@ -1,6 +1,6 @@
-<ng-container *ngIf="notification$ | async as notification">
-  <div *ngIf="isVisible$ | async"
-       [attr.data-testid]="notification.stateType + '-' + notification.requestStatus + '-notification'">
+<ng-container *ngIf="visibleNotification$ | async as notification">
+  <div
+    [attr.data-testid]="notification.stateType + '-' + notification.requestStatus + '-notification'">
     {{ notification.message }}
   </div>
 </ng-container>

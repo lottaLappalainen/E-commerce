@@ -24,10 +24,13 @@ export class AuthService {
     this.initialize();
   }
 
+  getAccessToken(): string | null {
+    return this.state.value.accessToken;
+  }
+
   private initialize() {
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
-      // Jos refresh token löytyy, yritetään kirjata sisään automaattisesti
       this.logger.log('Auth: Found refresh token, attempting auto login');
       this.refresh(refreshToken).subscribe();
     }

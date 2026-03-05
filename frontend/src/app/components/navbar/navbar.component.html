@@ -10,14 +10,14 @@
       <li><a routerLink="/register">Register</a></li>
     </ng-container>
 
-    <ng-container *ngIf="role === 'customer'">
+    <ng-container *ngIf="role === 'Customer'">
       <li><a routerLink="/products">Products</a></li>
       <li><a routerLink="/orders">Orders</a></li>
       <li><a routerLink="/cart">Cart</a></li>
       <li><a (click)="handleLogout()">Logout</a></li>
     </ng-container>
 
-    <ng-container *ngIf="role === 'admin'">
+    <ng-container *ngIf="role === 'Admin'">
       <li><a routerLink="/products">Products</a></li>
       <li><a routerLink="/orders">Orders</a></li>
       <li><a routerLink="/users">Users</a></li>
