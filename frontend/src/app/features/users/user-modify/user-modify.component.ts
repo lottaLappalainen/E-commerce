@@ -2,7 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
-import { UsersService } from '../../core/services/users.service';
+import { UsersService } from '../../../core/services/users.service';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-modify',
@@ -18,29 +19,51 @@ export class UserModifyComponent implements OnInit {
   private userService = inject(UsersService);
 
   userId!: string;
+  user: User | null = null;
 
   form = this.fb.nonNullable.group({
-    name: [''],
     role: ['']
   });
 
   ngOnInit(): void {
-    this.userId = String(this.route.snapshot.paramMap.get('userId'));
+
+    const id = this.route.snapshot.paramMap.get('userId');
+
+    if (!id) {
+      console.error('User ID missing in route');
+      return;
+    }
+
+    this.userId = id;
 
     this.userService.fetchUser(this.userId)
       .subscribe(user => {
-        this.form.patchValue(user);
+
+        this.user = user;
+
+        this.form.patchValue({
+          role: user.role
+        });
+
       });
+
   }
 
   handleSubmit(): void {
-    this.userService.modifyUser(this.userId, this.form.getRawValue())
+
+    const role = this.form.value.role;
+
+    if (!role) return;
+
+    this.userService.modifyUser(this.userId, role)
       .subscribe(() => {
         this.router.navigate(['/users', this.userId]);
       });
+
   }
 
   handleCancel(): void {
     this.router.navigate(['/users', this.userId]);
   }
+
 }

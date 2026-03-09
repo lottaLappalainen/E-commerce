@@ -1,0 +1,23 @@
+<div *ngIf="user">
+
+  <h2>Modify User</h2>
+
+  <p><strong>Email:</strong> {{ user.email }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+
+    <label>Role</label>
+
+    <select formControlName="role">
+      <option value="Customer">Customer</option>
+      <option value="Admin">Admin</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Save</button>
+    <button type="button" (click)="handleCancel()">Cancel</button>
+
+  </form>
+
+</div>

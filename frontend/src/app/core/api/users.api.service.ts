@@ -24,7 +24,10 @@ export class UsersApiService {
     return this.http.delete<User>(`${this.baseUrl}/${id}`);
   }
 
-  modifyUser(id: string, data: any): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/${id}/role`, data);
+  modifyUser(id: string, role: string): Observable<User> {
+    return this.http.put<User>(
+      `${this.baseUrl}/${id}/role`,
+      { role }
+    );
   }
 }

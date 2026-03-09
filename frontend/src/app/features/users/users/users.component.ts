@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UsersService } from '../../core/services/users.service';
-import { User } from '../../core/models/user.model';
+import { UsersService } from '../../../core/services/users.service';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-users',

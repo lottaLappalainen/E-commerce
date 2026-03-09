@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { OrdersService } from '../../core/services/orders.service';
-import { AuthService } from '../../core/services/auth.service';
+import { OrdersService } from '../../../core/services/orders.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({

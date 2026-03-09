@@ -29,10 +29,14 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id:guid}/role")]
-    public async Task<IActionResult> UpdateRole(Guid id, [FromBody] string role)
+    public async Task<IActionResult> UpdateRole(Guid id, [FromBody] UpdateUserRoleRequest request)
     {
-        var updated = await _service.UpdateRoleAsync(id, role);
-        return updated == null ? NotFound() : Ok(updated);
+        var user = await _service.UpdateRoleAsync(id, request.Role);
+
+        if (user == null)
+            return NotFound();
+
+        return Ok(user);
     }
 
     [HttpDelete("{id:guid}")]

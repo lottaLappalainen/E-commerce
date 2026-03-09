@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { CartService } from '../../core/services/cart.service';
-import { AuthService } from '../../core/services/auth.service';
-import { CheckoutService } from '../../core/services/checkout.service';
+import { CartService } from '../../../core/services/cart.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { CheckoutService } from '../../../core/services/checkout.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({

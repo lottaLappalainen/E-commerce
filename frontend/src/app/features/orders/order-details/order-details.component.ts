@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { OrdersService } from '../../core/services/orders.service';
+import { OrdersService } from '../../../core/services/orders.service';
 import { Observable } from 'rxjs';
-import { Order } from '../../core/models/order.model';
+import { Order } from '../../../core/models/order.model';
 
 @Component({
   selector: 'app-order-details',

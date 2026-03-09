@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductsService } from '../../core/services/products.service';
+import { ProductsService } from '../../../core/services/products.service';
 
 @Component({
   selector: 'app-modify-product',

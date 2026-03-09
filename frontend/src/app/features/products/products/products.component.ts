@@ -2,8 +2,8 @@ import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProductFormComponent } from '../product-form/product-form.component';
-import { ProductsService } from '../../core/services/products.service';
-import { CartService } from '../../core/services/cart.service';
+import { ProductsService } from '../../../core/services/products.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-products',

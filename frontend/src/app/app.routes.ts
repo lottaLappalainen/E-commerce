@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
 
 import { HomePageComponent } from './components/home-page/home-page.component';
-import { RegisterComponent } from './components/register/register.component';
-import { LoginComponent } from './components/login/login.component';
-import { ProductsComponent } from './components/products/products.component';
-import { ProductDetailsComponent } from './components/product-details/product-details.component';
-import { CartComponent } from './components/cart/cart.component';
-import { OrdersComponent } from './components/orders/orders.component';
-import { OrderDetailsComponent } from './components/order-details/order-details.component';
-import { ModifyProductComponent } from './components/modify-product/modify-product.component';
-import { UsersComponent } from './components/users/users.component';
-import { UserDetailsComponent } from './components/user-details/user-details.component';
-import { UserModifyComponent } from './components/user-modify/user-modify.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { LoginComponent } from './features/auth/login/login.component';
+import { ProductsComponent } from './features/product/products/products.component';
+import { ProductDetailsComponent } from './features/product/product-details/product-details.component';
+import { CartComponent } from './features/cart/cart/cart.component';
+import { OrdersComponent } from './features/order/orders/orders.component';
+import { OrderDetailsComponent } from './features/order/order-details/order-details.component';
+import { ModifyProductComponent } from './features/product/modify-product/modify-product.component';
+import { UsersComponent } from './features/users/users/users.component';
+import { UserDetailsComponent } from './features/users/user-details/user-details.component';
+import { UserModifyComponent } from './features/users/user-modify/user-modify.component';
 
 export const routes: Routes = [
   { path: '', component: HomePageComponent },

@@ -61,7 +61,13 @@ public class UserService : IUserService
             return null;
         }
 
-        user.Role = Enum.Parse<UserRole>(role, true);
+        if (!Enum.TryParse<UserRole>(role, true, out var parsedRole))
+{
+            _logger.LogWarning("Invalid role {Role}", role);
+            throw new ArgumentException("Invalid role");
+        }
+
+        user.Role = parsedRole;
 
         await _context.SaveChangesAsync();
 
