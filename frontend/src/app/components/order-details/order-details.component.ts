@@ -19,8 +19,8 @@ export class OrderDetailsComponent implements OnInit {
   order$!: Observable<Order>;
 
   ngOnInit(): void {
-    const id = String(this.route.snapshot.paramMap.get('id'));
-
+    const id = String(this.route.snapshot.paramMap.get('orderId'));
+    console.log("here", id)
     // haetaan yksittäinen tilaus backendistä
     this.order$ = this.ordersService.fetchOrder(id);
   }

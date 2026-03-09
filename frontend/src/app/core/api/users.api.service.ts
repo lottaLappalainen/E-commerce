@@ -25,6 +25,6 @@ export class UsersApiService {
   }
 
   modifyUser(id: string, data: any): Observable<User> {
-    return this.http.put<User>(`${this.baseUrl}/${id}`, data);
+    return this.http.put<User>(`${this.baseUrl}/${id}/role`, data);
   }
 }

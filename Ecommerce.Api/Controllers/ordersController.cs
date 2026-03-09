@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Ecommerce.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,18 +23,24 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetAll()
         => Ok(await _service.GetAllAsync());
 
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyOrders()
+    {
+        var userId = User.FindFirst("id")?.Value;
+
+        if (userId == null)
+            return Unauthorized();
+
+        var orders = await _service.GetByCustomerAsync(Guid.Parse(userId));
+
+        return Ok(orders);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
         var order = await _service.GetByIdAsync(id);
         return order == null ? NotFound() : Ok(order);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateOrderDto dto)
-    {
-        var order = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
     }
 
     [Authorize(Roles = "Admin")]

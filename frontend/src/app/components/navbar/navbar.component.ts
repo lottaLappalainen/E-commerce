@@ -18,9 +18,6 @@ export class NavbarComponent {
   role$ = this.authService.state$
     .pipe(map(state => state.role));
 
-  capitalizedRole$ = this.role$
-    .pipe(map(role => role.charAt(0).toUpperCase() + role.slice(1)));
-
   handleLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);

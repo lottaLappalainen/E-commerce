@@ -20,7 +20,7 @@ export class UserDetailsComponent implements OnInit {
   loading = true;
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('userId');
 
     if (!id) {
       this.loading = false;
