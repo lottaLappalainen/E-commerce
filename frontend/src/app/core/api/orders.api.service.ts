@@ -3,6 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order } from '../models/order.model';
 
+export interface CreateOrderRequest {
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,11 +23,12 @@ export class OrdersApiService {
     return this.http.get<Order[]>(this.baseUrl);
   }
 
+  getMyOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.baseUrl}/my`);
+  }
+
   getOrder(id: string): Observable<Order> {
     return this.http.get<Order>(`${this.baseUrl}/${id}`);
   }
 
-  addOrder(data: Partial<Order>): Observable<Order> {
-    return this.http.post<Order>(this.baseUrl, data);
-  }
 }

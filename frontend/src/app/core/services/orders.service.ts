@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
-import { OrdersApiService } from '../api/orders.api.service';
+import { OrdersApiService, CreateOrderRequest } from '../api/orders.api.service';
 import { Order } from '../models/order.model';
 import { NotificationService } from './notification.service';
 import { LoggerService } from './logger.service';
+import { CartItem } from '../models/cart-item.model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,17 @@ export class OrdersService {
     );
   }
 
+  fetchMyOrders() {
+    this.logger.log('Orders: Fetching my orders');
+
+    return this.api.getMyOrders().pipe(
+      tap(orders => {
+        this.ordersState.next(orders);
+        this.logger.log('Orders: My orders loaded', orders.length);
+      })
+    );
+  }
+
   fetchOrder(id: string) {
     this.logger.log('Orders: Fetching single order', id);
 
@@ -57,14 +69,4 @@ export class OrdersService {
     );
   }
 
-  addOrder(data: Partial<Order>) {
-    this.logger.log('Orders: Creating order', data);
-
-    return this.api.addOrder(data).pipe(
-      tap(order => {
-        this.ordersState.next([...this.ordersState.value, order]);
-        this.logger.log('Orders: Order added to state', order);
-      })
-    );
-  }
 }

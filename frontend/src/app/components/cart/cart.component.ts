@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
-import { OrdersService } from '../../core/services/orders.service';
-import { CartItem } from '../../core/models/cart-item.model';
+import { CheckoutService } from '../../core/services/checkout.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -17,13 +16,15 @@ export class CartComponent {
 
   private cartService = inject(CartService);
   private authService = inject(AuthService);
-  private ordersService = inject(OrdersService);
+  private checkoutService = inject(CheckoutService);
   private router = inject(Router);
 
   cartItems$ = this.cartService.cart$;
   authState$ = this.authService.state$;
 
   handleUpdateQuantity(id: string, quantity: number) {
+
+    // jos määrä menee nollaan → poistetaan tuote
     if (quantity <= 0) {
       this.cartService.removeFromCart(id);
     } else {
@@ -36,26 +37,32 @@ export class CartComponent {
   }
 
   async handleOrder() {
+
     const authState = await firstValueFrom(this.authState$);
 
+    // guest ei saa tehdä tilausta
     if (authState.role === 'guest') {
       this.router.navigate(['/login']);
       return;
     }
 
     const items = this.cartService.items;
-    const totalPrice = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
 
-    this.ordersService.addOrder({
-      products: items,
-      totalPrice,
-      userId: authState.user!.id
-    }).subscribe(() => {
-      this.cartService.clearCart();
-      this.router.navigate(['/orders']);
-    });
+    if (!items.length) return;
+
+    // backend laskee hinnat itse → lähetetään vain productId + quantity
+    const checkoutItems = items.map(item => ({
+      productId: item.id,
+      quantity: item.quantity
+    }));
+
+    this.checkoutService.checkout(checkoutItems)
+      .subscribe(() => {
+
+        // tyhjennetään ostoskori onnistuneen tilauksen jälkeen
+        this.cartService.clearCart();
+
+        this.router.navigate(['/orders']);
+      });
   }
 }
